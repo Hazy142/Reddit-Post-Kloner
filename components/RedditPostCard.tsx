@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { RedditPostData } from '../types';
 import { UpvoteIcon, CommentIcon, ShareIcon, SparklesIcon, ThumbsUpIcon, EyeIcon, EyeSlashIcon } from './icons';
+import { CopyButton } from './CopyButton';
 
 interface RedditPostCardProps {
     post: RedditPostData;
@@ -105,19 +106,24 @@ export const RedditPostCard: React.FC<RedditPostCardProps> = ({ post, aiTitle, i
                 )}
             </div>
 
-            <div className="px-4 py-2 border-t-2 border-zinc-800 flex items-center justify-end text-zinc-400">
-                <div className="flex items-center gap-2">
+            <div className="px-4 py-4 border-t-2 border-zinc-800 flex items-center justify-between text-zinc-400">
+                {isAiCard && aiTitle && (
+                    <div className="flex-shrink-0">
+                        <CopyButton text={aiTitle} className="text-sm py-2 px-4" />
+                    </div>
+                )}
+                <div className="flex items-center gap-2 ml-auto">
                     {post.selftext && (
                         <button
                             onClick={() => setIsBodyVisible(!isBodyVisible)}
-                            className="p-2 rounded-full hover:bg-zinc-700 hover:text-white transition-colors"
+                            className="p-2 rounded-full hover:bg-zinc-700 hover:text-white transition-all transform hover:scale-110"
                             title={isBodyVisible ? 'Inhalt ausblenden' : 'Inhalt anzeigen'}
                             aria-label={isBodyVisible ? 'Inhalt ausblenden' : 'Inhalt anzeigen'}
                         >
                             {isBodyVisible ? <EyeSlashIcon className="w-6 h-6" /> : <EyeIcon className="w-6 h-6" />}
                         </button>
                     )}
-                     <a href={`https://reddit.com${post.permalink}`} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:bg-zinc-700 hover:text-white transition-colors" title="Auf Reddit teilen">
+                     <a href={`https://reddit.com${post.permalink}`} target="_blank" rel="noopener noreferrer" className="p-2 rounded-full hover:bg-zinc-700 hover:text-white transition-all transform hover:scale-110" title="Auf Reddit teilen">
                        <ShareIcon className="w-6 h-6" />
                     </a>
                 </div>
