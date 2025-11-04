@@ -1,6 +1,43 @@
 import { RedditPostData } from '../types';
 
 const CORS_PROXY = 'https://corsproxy.io/?';
+const JINA_PROXY_PREFIX = 'https://r.jina.ai/';
+
+type ProxyTransformer = (url: string) => string;
+
+const PROXY_TRANSFORMERS: ProxyTransformer[] = [
+    (url: string) => `${CORS_PROXY}${encodeURIComponent(url)}`,
+    (url: string) => `${JINA_PROXY_PREFIX}${url}`,
+];
+
+async function fetchWithFallback(url: string): Promise<Response> {
+    let lastError: unknown;
+    for (const transform of PROXY_TRANSFORMERS) {
+        const proxiedUrl = transform(url);
+        try {
+            const response = await fetch(proxiedUrl, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
+            });
+            if (response.ok) {
+                return response;
+            }
+            lastError = new Error(`Antwortstatus ${response.status} für ${proxiedUrl}`);
+        } catch (error) {
+            lastError = error;
+        }
+    }
+    throw lastError instanceof Error
+        ? lastError
+        : new Error('Alle Proxy-Versuche sind fehlgeschlagen.');
+}
+
+function appendRawJsonParam(url: string): string {
+    const hasQuery = url.includes('?');
+    const separator = hasQuery ? '&' : '?';
+    return `${url}${separator}raw_json=1`;
+}
 
 // Helper function to fetch author's profile picture
 async function fetchAuthorProfilePic(author: string): Promise<string | undefined> {
@@ -8,10 +45,8 @@ async function fetchAuthorProfilePic(author: string): Promise<string | undefined
         return undefined;
     }
     try {
-        const response = await fetch(`${CORS_PROXY}https://www.reddit.com/user/${author}/about.json`);
-        if (!response.ok) {
-            return undefined;
-        }
+        const aboutUrl = appendRawJsonParam(`https://www.reddit.com/user/${author}/about.json`);
+        const response = await fetchWithFallback(aboutUrl);
         const data = await response.json();
         const profilePicUrl = data?.data?.snoovatar_img || data?.data?.icon_img;
         // Clean URL by removing query parameters
@@ -29,13 +64,11 @@ export async function fetchRedditPost(url: string): Promise<RedditPostData> {
     }
 
     const cleanedUrl = url.split('?')[0].split('#')[0];
-    const jsonUrl = cleanedUrl.endsWith('/') ? `${cleanedUrl}.json` : `${cleanedUrl}/.json`;
+    const baseJsonUrl = cleanedUrl.endsWith('/') ? `${cleanedUrl}.json` : `${cleanedUrl}/.json`;
+    const jsonUrl = appendRawJsonParam(baseJsonUrl);
 
     try {
-        const response = await fetch(`${CORS_PROXY}${encodeURIComponent(jsonUrl)}`);
-        if (!response.ok) {
-            throw new Error(`Post konnte nicht geladen werden (Status: ${response.status})`);
-        }
+        const response = await fetchWithFallback(jsonUrl);
         const data = await response.json();
 
         if (!Array.isArray(data) || data.length < 1 || !data[0]?.data?.children?.[0]?.data) {
