@@ -1,5 +1,5 @@
 {
-  "name": "Reddit Post Kloner & Analysator",
+  "name": "Copy of Reddit Post Kloner & Analysator",
   "description": "Eine Webanwendung, die Reddit-Post-Daten extrahiert und mit der Gemini-API virale TikTok-Titel generiert, um sie nebeneinander anzuzeigen.",
   "requestFramePermissions": []
 }

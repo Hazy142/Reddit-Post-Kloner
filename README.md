@@ -6,7 +6,7 @@
 
 This contains everything you need to run your app locally.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1BXBy7MJhgoZHa0XcpIc4uKNjU2ZQDwFT
+View your app in AI Studio: https://ai.studio/apps/drive/1i5J6anxmZlGMpD_fW8D92hyjLm16qf6O
 
 ## Run Locally
 
@@ -15,6 +15,6 @@ View your app in AI Studio: https://ai.studio/apps/drive/1BXBy7MJhgoZHa0XcpIc4uK
 
 1. Install dependencies:
    `npm install`
-2. Set the `PERPLEXITY_API_KEY` in [.env.local](.env.local) to your Perplexity API key
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`

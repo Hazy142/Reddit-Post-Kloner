@@ -26,6 +26,50 @@
       }
     }
     </script>
+<style>
+@keyframes spin-slow { 
+    from { transform: rotate(0deg); } 
+    to { transform: rotate(360deg); } 
+}
+.animate-spin-slow { 
+    animation: spin-slow 8s linear infinite; 
+}
+.text-shadow { text-shadow: 1px 1px 2px rgba(0,0,0,0.5); }
+.text-shadow-lg { text-shadow: 0px 2px 5px rgba(0,0,0,0.7); }
+.line-clamp-6 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+}
+.aspect-w-9 { --tw-aspect-w: 9; }
+.aspect-w-1 { --tw-aspect-w: 1; }
+.aspect-w-16 { --tw-aspect-w: 16; }
+.aspect-h-16 { --tw-aspect-h: 16; }
+.aspect-h-9 { --tw-aspect-h: 9; }
+.aspect-h-1 { --tw-aspect-h: 1; }
+.aspect-w-9.aspect-h-16, .aspect-w-1.aspect-h-1, .aspect-w-16.aspect-h-9 {
+    position: relative;
+    padding-bottom: calc(var(--tw-aspect-h) / var(--tw-aspect-w) * 100%);
+}
+.aspect-w-9.aspect-h-16 > *, .aspect-w-1.aspect-h-1 > *, .aspect-w-16.aspect-h-9 > * {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+.text-stroke {
+    -webkit-text-stroke: 2px black;
+    paint-order: stroke fill;
+}
+.text-stroke-sm {
+    -webkit-text-stroke: 1px black;
+    paint-order: stroke fill;
+}
+</style>
 <script type="importmap">
 {
   "imports": {
