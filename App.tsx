@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { RedditPostData } from './types';
 import { fetchRedditPost } from './services/redditService';
-import { generateTikTokTitle } from './services/geminiService';
+import { generateTikTokTitle } from './services/perplexityService';
 import { UrlInputForm } from './components/UrlInputForm';
 import { RedditPostCard } from './components/RedditPostCard';
 import { LoadingSpinner, SparklesIcon } from './components/icons';
@@ -110,7 +110,7 @@ const App: React.FC = () => {
                     )}
                 </div>
                  <footer className="text-center mt-12 text-zinc-500 text-sm">
-                    <p>Powered by React, Tailwind CSS, Reddit API, and Google Gemini.</p>
+                    <p>Powered by React, Tailwind CSS, Reddit API, and Perplexity AI.</p>
                 </footer>
             </main>
         </div>

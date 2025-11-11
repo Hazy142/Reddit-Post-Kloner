@@ -93,12 +93,48 @@ export default defineConfig(({ mode }) => {
                 });
               },
             },
+            '/api/perplexity': {
+              target: 'https://api.perplexity.ai',
+              changeOrigin: true,
+              secure: true,
+              rewrite: (path) => path.replace(/^\/api\/perplexity/, ''),
+              configure: (proxy, _options) => {
+                proxy.on('proxyReq', (proxyReq, req, _res) => {
+                  // Setze erforderliche Header für Perplexity API
+                  proxyReq.setHeader('Authorization', `Bearer ${env.PERPLEXITY_API_KEY}`);
+                  
+                  console.log(`[PROXY] Perplexity API: ${req.method} ${req.url}`);
+                  console.log(`[PROXY] API Key configured: ${env.PERPLEXITY_API_KEY ? 'Yes (length: ' + (env.PERPLEXITY_API_KEY?.length || 0) + ')' : 'No'}`);
+                });
+                proxy.on('proxyRes', (proxyRes, req, res) => {
+                  console.log(`[PROXY] Perplexity Response: ${proxyRes.statusCode} for ${req.url}`);
+                  
+                  // CORS Headers
+                  proxyRes.headers['access-control-allow-origin'] = '*';
+                  proxyRes.headers['access-control-allow-methods'] = 'POST, OPTIONS';
+                  proxyRes.headers['access-control-allow-headers'] = '*';
+                  
+                  // Log error responses with body
+                  if (proxyRes.statusCode >= 400) {
+                    let body = '';
+                    proxyRes.on('data', (chunk) => {
+                      body += chunk.toString();
+                    });
+                    proxyRes.on('end', () => {
+                      console.error(`[PROXY] Perplexity API error ${proxyRes.statusCode}:`, body);
+                    });
+                  }
+                });
+                proxy.on('error', (err, req, res) => {
+                  console.error('[PROXY] Perplexity error:', err);
+                });
+              },
+            },
           },
       },
       plugins: [react()],
       define: {
-        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+        'process.env.PERPLEXITY_API_KEY': JSON.stringify(env.PERPLEXITY_API_KEY),
         'process.env.REDDIT_CLIENT_ID': JSON.stringify(env.REDDIT_CLIENT_ID || 'K31ykUdjLyJ_m2ujQvLuTw'),
         'process.env.REDDIT_CLIENT_SECRET': JSON.stringify(env.REDDIT_CLIENT_SECRET || 'ekdVGrgS7coi6SmkEajpD2lKLTzl2w'),
       },
